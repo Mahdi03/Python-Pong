@@ -1,11 +1,41 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
 from kivy.properties import (
     NumericProperty, ReferenceListProperty, ObjectProperty
 )
 from kivy.vector import Vector
 from kivy.clock import Clock
 from random import randint
+#Global Vars
+"""def chooseRandLaunchDeg():
+    randomNum = randint(0, 1)
+    if randomNum == 0:
+        allLaunchDeg = []
+        for i in range(35, -1, -1):
+            allLaunchDeg.append(i)
+        for j in range(360, 324, -1):
+            allLaunchDeg.append(j)
+        k = randint(0, len(allLaunchDeg))
+        randomLaunchDeg = allLaunchDeg[k]
+        return randomLaunchDeg
+    elif randomNum == 1:
+        randomLaunchDeg = randint(135, 235)
+        return randomLaunchDeg"""
+def chooseRandLaunchDeg():
+    randomNum = randint(0, 1)
+    if randomNum == 0:
+        allLaunchDeg = []
+        for i in range(35, -1, -1):
+            allLaunchDeg.append(i)
+        for j in range(360, 324, -1):
+            allLaunchDeg.append(j)
+        k = randint(0, len(allLaunchDeg))
+        randomLaunchDeg = allLaunchDeg[k]
+    elif randomNum == 1:
+        randomLaunchDeg = randint(135, 235)
+    return randomLaunchDeg
+
 
 class PongPaddle(Widget):
     score = NumericProperty(0)
@@ -19,17 +49,10 @@ class PongPaddle(Widget):
             ball.velocity = vel.x, vel.y + offset
 
 class PongBall(Widget):
-
-    # velocity of the ball on x and y axis
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
-
-    # referencelist property so we can use ball.velocity as
-    # a shorthand, just like e.g. w.pos for w.x and w.y
     velocity = ReferenceListProperty(velocity_x, velocity_y)
 
-    # ``move`` function will move the ball one step. This
-    #  will be called in equal intervals to animate the ball
     def move(self):
         self.pos = Vector(*self.velocity) + self.pos
 
@@ -38,37 +61,30 @@ class PongGame(Widget):
     player1 = ObjectProperty(None)
     player2 = ObjectProperty(None)
 
-
-    def serve_ball(self):
+    def serve_ball(self, vel=Vector(1, 1).rotate(chooseRandLaunchDeg())):
         self.ball.center = self.center
-        self.ball.velocity = Vector(4, 0).rotate(randint(0, 360))
+        self.ball.velocity = vel
 
     def update(self, dt):
         self.ball.move()
-        # bounce off of pedals
+        self.player1.center_y = self.ball.y
+        # bounce of paddles
         self.player1.bounce_ball(self.ball)
         self.player2.bounce_ball(self.ball)
 
-        # bounce off top and bottom
-        if (self.ball.y < 0) or (self.ball.top > self.height):
+        # bounce ball off bottom or top
+        if (self.ball.y < self.y) or (self.ball.top > self.top):
             self.ball.velocity_y *= -1
 
-        # bounce off left and right
-        if (self.ball.x < 0) or (self.ball.right > self.width):
-            self.ball.velocity_x *= -1
-
-        # Score Points
+        # went of to a side to score point?
         if self.ball.x < self.x:
             self.player2.score += 1
-            self.serve_ball()
+            self.serve_ball(vel=Vector(2, 2).rotate(chooseRandLaunchDeg()))
         if self.ball.x > self.width:
             self.player1.score += 1
-            self.serve_ball()
+            self.serve_ball(vel=Vector(2, 2).rotate(chooseRandLaunchDeg()))
 
-    pass
-    def on_touch_move(self, touch):
-        if touch.x < self.width / 3:
-            self.player1.center_y = touch.y
+    def on_touch_move(self, touch):            
         if touch.x > self.width - self.width / 3:
             self.player2.center_y = touch.y
 
@@ -76,8 +92,10 @@ class PongApp(App):
     def build(self):
         game = PongGame()
         game.serve_ball()
-        Clock.schedule_interval(game.update, 1.0/60.0)
+        Clock.schedule_interval(game.update, 1 / 1080)
+        
         return game
 
+
 if __name__ == '__main__':
-    PongApp().run() 
+    PongApp().run()
