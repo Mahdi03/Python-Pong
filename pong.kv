@@ -18,18 +18,18 @@
     ball: pong_ball
     player1: player_left
     player2: player_right
-    
+
     canvas:
         Rectangle:
             pos: self.center_x - 5, 0
             size: 4, self.height
-            
+                
         Rectangle:
-            pos: 0, 0
+            pos: self.width, 0
             size: 2, self.height
 
         Rectangle:
-            pos: root.width, 0
+            pos: root.width - self.width, 0
             size: 2, self.height
 
     

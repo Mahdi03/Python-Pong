@@ -7,21 +7,8 @@ from kivy.properties import (
 from kivy.vector import Vector
 from kivy.clock import Clock
 from random import randint
-#Global Vars
-"""def chooseRandLaunchDeg():
-    randomNum = randint(0, 1)
-    if randomNum == 0:
-        allLaunchDeg = []
-        for i in range(35, -1, -1):
-            allLaunchDeg.append(i)
-        for j in range(360, 324, -1):
-            allLaunchDeg.append(j)
-        k = randint(0, len(allLaunchDeg))
-        randomLaunchDeg = allLaunchDeg[k]
-        return randomLaunchDeg
-    elif randomNum == 1:
-        randomLaunchDeg = randint(135, 235)
-        return randomLaunchDeg"""
+#Global Vars and Functions
+
 def chooseRandLaunchDeg():
     randomNum = randint(0, 1)
     if randomNum == 0:
@@ -30,12 +17,11 @@ def chooseRandLaunchDeg():
             allLaunchDeg.append(i)
         for j in range(360, 324, -1):
             allLaunchDeg.append(j)
-        k = randint(0, len(allLaunchDeg))
+        k = randint(0, len(allLaunchDeg) - 1)
         randomLaunchDeg = allLaunchDeg[k]
     elif randomNum == 1:
-        randomLaunchDeg = randint(135, 235)
+        randomLaunchDeg = randint(90, 175)
     return randomLaunchDeg
-
 
 class PongPaddle(Widget):
     score = NumericProperty(0)
